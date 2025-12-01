@@ -3,42 +3,46 @@ require "application_system_test_case"
 class TodosTest < ApplicationSystemTestCase
   setup do
     @todo = todos(:one)
+    @user = users(:one)
+
+    visit new_session_path
+    fill_in "Email", with: @user.email
+    fill_in "Password", with: "password"
+    within("form") { click_on "ログイン" }
   end
 
   test "visiting the index" do
     visit todos_url
-    assert_selector "h1", text: "Todos"
+    assert_selector "h1", text: "あなたのTodo"
   end
 
   test "should create todo" do
     visit todos_url
-    click_on "New todo"
+    click_on "新規作成"
 
     check "Completed" if @todo.completed
     fill_in "Description", with: @todo.description
     fill_in "Title", with: @todo.title
-    click_on "Create Todo"
+    click_on "保存"
 
     assert_text "Todo was successfully created"
-    click_on "Back"
   end
 
   test "should update Todo" do
     visit todo_url(@todo)
-    click_on "Edit this todo", match: :first
+    click_on "編集", match: :first
 
     check "Completed" if @todo.completed
     fill_in "Description", with: @todo.description
     fill_in "Title", with: @todo.title
-    click_on "Update Todo"
+    click_on "保存"
 
     assert_text "Todo was successfully updated"
-    click_on "Back"
   end
 
   test "should destroy Todo" do
     visit todo_url(@todo)
-    click_on "Destroy this todo", match: :first
+    click_on "削除", match: :first
 
     assert_text "Todo was successfully destroyed"
   end
@@ -47,7 +51,7 @@ class TodosTest < ApplicationSystemTestCase
     visit new_todo_url
 
     fill_in "Description", with: "Some description"
-    click_on "Create Todo"
+    click_on "保存"
 
     assert_text "Title can't be blank"
   end

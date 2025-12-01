@@ -73,10 +73,11 @@ RSpec.configure do |config|
   config.include AuthHelpers, type: :request
 
   config.before(:each, type: :system) do
-    driver = if ENV["CAPYBARA_DRIVER"] == "rack_test"
-               :rack_test
+    driver = if ENV["CAPYBARA_DRIVER"].present?
+               ENV["CAPYBARA_DRIVER"].to_sym
              elsif ENV["NO_HEADLESS"] == "1"
-               :selenium_chrome
+               # Some environments block TCP ports for Capybara server; fallback unless explicitly allowed.
+               ENV["CAPYBARA_ALLOW_SERVER"] == "1" ? :selenium_chrome : :rack_test
              else
                :selenium_chrome_headless
              end

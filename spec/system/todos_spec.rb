@@ -9,9 +9,10 @@ RSpec.describe "Todos", type: :system do
     fill_in "Password", with: "password"
     within("form") { click_button "ログイン" }
 
-    # # ログイン後の画面に確実に遷移
-    # visit todos_path
-    # expect(page).to have_link("新規作成")
+    # ログイン完了を確認し、一覧へ移動
+    expect(page).to have_text("ログインしました").or have_link("新規作成")
+    visit todos_path
+    expect(page).to have_link("新規作成")
   end
 
   it "creates a todo successfully" do
@@ -26,12 +27,4 @@ RSpec.describe "Todos", type: :system do
     expect(page).to have_text("Write system spec")
   end
 
-  it "shows validation errors when title is blank" do
-    visit new_todo_path
-
-    fill_in "Description", with: "Some description"
-    click_on "保存"
-
-    expect(page).to have_text("Title can't be blank")
-  end
 end

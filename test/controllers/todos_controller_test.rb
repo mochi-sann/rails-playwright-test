@@ -3,6 +3,7 @@ require "test_helper"
 class TodosControllerTest < ActionDispatch::IntegrationTest
   setup do
     @todo = todos(:one)
+    sign_in(users(:one))
   end
 
   test "should get index" do
