@@ -75,10 +75,10 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Install Playwright browsers
+      - name: Install Playwright (npm) and browsers
         run: |
-          bundle exec playwright install-deps chromium
-          bundle exec playwright install chromium
+          npm install playwright@1.57.0 --no-save
+          npx playwright install chromium
 
       - name: Run tests
         env:
