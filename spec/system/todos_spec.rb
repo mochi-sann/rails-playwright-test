@@ -5,9 +5,13 @@ RSpec.describe "Todos", type: :system do
 
   before do
     visit new_session_path
-    fill_in "Email", with: user.email
+    fill_in "Email", with: "user@example.com"
     fill_in "Password", with: "password"
     within("form") { click_button "ログイン" }
+
+    # # ログイン後の画面に確実に遷移
+    # visit todos_path
+    # expect(page).to have_link("新規作成")
   end
 
   it "creates a todo successfully" do
