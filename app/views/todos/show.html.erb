@@ -5,3 +5,51 @@
   <%= link_to "一覧へ戻る", todos_path, class: "btn secondary" %>
   <%= button_to "削除", @todo, method: :delete, class: "btn ghost", form: { data: { turbo_confirm: "削除しますか？" } } %>
 </div>
+
+<div class="card">
+  <h3>サブタスク</h3>
+  <% if @todo.subtasks.any? %>
+    <ul>
+      <% @todo.subtasks.each do |subtask| %>
+        <li>
+          <% if subtask.completed %>
+            ✅
+          <% else %>
+            ☐
+          <% end %>
+          <%= subtask.title %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">サブタスクはまだありません。</p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>コメント</h3>
+  <% if @todo.comments.any? %>
+    <ul>
+      <% @todo.comments.order(created_at: :desc).each do |comment| %>
+        <li>
+          <div class="todo-meta">
+            <%= comment.user.email %> ・ <%= l comment.created_at, format: :short %>
+          </div>
+          <div><%= simple_format(comment.body) %></div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">コメントはまだありません。</p>
+  <% end %>
+
+  <%= form_with model: [@todo, Comment.new], url: todo_comments_path(@todo), local: true do |f| %>
+    <div class="field">
+      <%= f.label :body, "コメントを書く" %>
+      <%= f.text_area :body, rows: 3, required: true %>
+    </div>
+    <div class="todo-actions">
+      <%= f.submit "投稿", class: "btn" %>
+    </div>
+  <% end %>
+</div>

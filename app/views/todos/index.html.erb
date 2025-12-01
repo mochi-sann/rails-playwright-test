@@ -5,6 +5,27 @@
   <%= link_to "新規作成", new_todo_path, class: "btn" %>
 </div>
 
+<div class="card" style="margin-bottom: 16px;">
+  <%= form_with url: todos_path, method: :get, local: true do |f| %>
+    <div class="field">
+      <%= f.label :q, "キーワード" %>
+      <%= f.text_field :q, value: params[:q], placeholder: "タイトル/説明を検索" %>
+    </div>
+    <div class="field">
+      <%= f.label :status, "ステータス" %>
+      <%= f.select :status, [["すべて", ""], ["未完了", "open"], ["完了", "completed"]], selected: params[:status] %>
+    </div>
+    <div class="field">
+      <%= f.label :tag, "タグ" %>
+      <%= f.text_field :tag, value: params[:tag], placeholder: "タグ名" %>
+    </div>
+    <div class="todo-actions">
+      <%= f.submit "フィルタ", class: "btn" %>
+      <%= link_to "クリア", todos_path, class: "btn secondary" %>
+    </div>
+  <% end %>
+</div>
+
 <div id="todos">
   <% if @todos.any? %>
     <% @todos.each do |todo| %>

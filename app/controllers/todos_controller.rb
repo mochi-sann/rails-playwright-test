@@ -5,6 +5,24 @@ class TodosController < ApplicationController
   # GET /todos or /todos.json
   def index
     @todos = current_user.todos.order(created_at: :desc)
+
+    if params[:status].present?
+      case params[:status]
+      when "completed"
+        @todos = @todos.where(completed: true)
+      when "open"
+        @todos = @todos.where(completed: false)
+      end
+    end
+
+    if params[:tag].present?
+      @todos = @todos.where("tags LIKE ?", "%#{params[:tag]}%")
+    end
+
+    if params[:q].present?
+      q = "%#{params[:q]}%"
+      @todos = @todos.where("title LIKE :q OR description LIKE :q", q: q)
+    end
   end
 
   # GET /todos/1 or /todos/1.json
@@ -66,6 +84,6 @@ class TodosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def todo_params
-      params.expect(todo: [ :title, :description, :completed ])
+      params.expect(todo: [ :title, :description, :completed, :due_date, :priority, :tags, subtasks_attributes: %i[id title completed _destroy] ])
     end
 end

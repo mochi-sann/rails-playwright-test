@@ -8,7 +8,7 @@ RSpec.describe "Todos", type: :request do
   describe "POST /todos" do
     it "creates a todo when valid" do
       expect do
-        post todos_path, params: { todo: { title: "New Todo", description: "RSpec request spec", completed: false } }
+        post todos_path, params: { todo: { title: "New Todo", description: "RSpec request spec", completed: false, priority: :high, tags: "work" } }
       end.to change(Todo, :count).by(1)
 
       expect(response).to redirect_to(todo_path(Todo.last))
@@ -20,6 +20,19 @@ RSpec.describe "Todos", type: :request do
       end.not_to change(Todo, :count)
 
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  describe "filtering" do
+    before do
+      user.todos.create!(title: "Open", completed: false)
+      user.todos.create!(title: "Done", completed: true)
+    end
+
+    it "filters by status open" do
+      get todos_path, params: { status: "open" }
+      expect(response.body).to include("Open")
+      expect(response.body).not_to include("Done")
     end
   end
 
