@@ -42,4 +42,13 @@ class TodosTest < ApplicationSystemTestCase
 
     assert_text "Todo was successfully destroyed"
   end
+
+  test "shows validation errors when title is blank" do
+    visit new_todo_url
+
+    fill_in "Description", with: "Some description"
+    click_on "Create Todo"
+
+    assert_text "Title can't be blank"
+  end
 end

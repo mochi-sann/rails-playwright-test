@@ -23,6 +23,14 @@ class TodosControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to todo_url(Todo.last)
   end
 
+  test "should not create todo without title" do
+    assert_no_difference("Todo.count") do
+      post todos_url, params: { todo: { completed: false, description: "no title", title: "" } }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
   test "should show todo" do
     get todo_url(@todo)
     assert_response :success
