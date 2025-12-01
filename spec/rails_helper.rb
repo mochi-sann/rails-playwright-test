@@ -71,6 +71,14 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.before(:each, type: :system) do
-    driven_by :rack_test
+    driver = if ENV["CAPYBARA_DRIVER"] == "rack_test"
+               :rack_test
+             elsif ENV["NO_HEADLESS"] == "1"
+               :selenium_chrome
+             else
+               :selenium_chrome_headless
+             end
+
+    driven_by driver, screen_size: [1400, 1400]
   end
 end

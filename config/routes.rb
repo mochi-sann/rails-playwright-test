@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   root "todos#index"
+
+  resource :session, only: %i[new create destroy]
+  resources :users, only: %i[new create]
   resources :todos
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

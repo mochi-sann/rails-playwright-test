@@ -1,10 +1,7 @@
-<p style="color: green"><%= notice %></p>
-
 <%= render @todo %>
 
-<div>
-  <%= link_to "Edit this todo", edit_todo_path(@todo) %> |
-  <%= link_to "Back to todos", todos_path %>
-
-  <%= button_to "Destroy this todo", @todo, method: :delete %>
+<div class="todo-actions">
+  <%= link_to "編集", edit_todo_path(@todo), class: "btn" %>
+  <%= link_to "一覧へ戻る", todos_path, class: "btn secondary" %>
+  <%= button_to "削除", @todo, method: :delete, class: "btn ghost", form: { data: { turbo_confirm: "削除しますか？" } } %>
 </div>

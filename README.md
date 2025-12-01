@@ -1,24 +1,27 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## UIを表示して動作確認する手順
 
-Things you may want to cover:
+1. 依存インストールとDB準備（未実行なら）
+   - `bundle install`
+   - `bin/rails db:prepare`
+2. 開発サーバ起動
+   - `bin/dev`（importmap + Turbo/Stimulus入りの標準構成）
+3. ブラウザで `http://localhost:3000/` を開き、Todo一覧/作成/編集/削除/完了チェックを確認
 
-* Ruby version
+## テスト実行手順
 
-* System dependencies
+- RSpec（CIと同じコマンド）: `bundle exec rspec`
+  - `spec/system` は `rack_test` ドライバを利用しておりブラウザ不要で実行可能です。
 
-* Configuration
+## UIを表示しつつE2Eテストを実行する方法
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. アプリ起動
+   - `bin/rails db:prepare`
+   - `bin/dev` を起動し、`http://localhost:3000/` をブラウザで開く（UI確認用）。
+2. E2E（システム）テスト実行
+   - 別ターミナルで以下を実行。
+     - ヘッドレス実行（デフォルト）: `bundle exec rspec spec/system`
+     - Chromeを表示して実行: `NO_HEADLESS=1 bundle exec rspec spec/system`
+   - Chrome実行時はChrome/ChromeDriverが必要です（GitHub Actions などのホストには同梱されていることが多いですが、ローカルで不足している場合はインストールしてください）。
+   - もし環境制約でCapybaraがTCPポートを開けない場合は、`CAPYBARA_DRIVER=rack_test bundle exec rspec spec/system` でRack::Testドライバにフォールバックできます（ブラウザなし）。

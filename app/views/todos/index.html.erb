@@ -1,16 +1,19 @@
-<p style="color: green"><%= notice %></p>
-
 <% content_for :title, "Todos" %>
 
-<h1>Todos</h1>
-
-<div id="todos">
-  <% @todos.each do |todo| %>
-    <%= render todo %>
-    <p>
-      <%= link_to "Show this todo", todo %>
-    </p>
-  <% end %>
+<div class="list-header">
+  <h1>あなたのTodo</h1>
+  <%= link_to "新規作成", new_todo_path, class: "btn" %>
 </div>
 
-<%= link_to "New todo", new_todo_path %>
+<div id="todos">
+  <% if @todos.any? %>
+    <% @todos.each do |todo| %>
+      <%= render todo %>
+    <% end %>
+  <% else %>
+    <div class="card">
+      <p>まだTodoがありません。まずは1件追加してみましょう。</p>
+      <%= link_to "Todoを追加", new_todo_path, class: "btn" %>
+    </div>
+  <% end %>
+</div>

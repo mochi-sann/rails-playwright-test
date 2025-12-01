@@ -1,9 +1,10 @@
 class TodosController < ApplicationController
+  before_action :require_login
   before_action :set_todo, only: %i[ show edit update destroy ]
 
   # GET /todos or /todos.json
   def index
-    @todos = Todo.all
+    @todos = current_user.todos.order(created_at: :desc)
   end
 
   # GET /todos/1 or /todos/1.json
@@ -12,7 +13,7 @@ class TodosController < ApplicationController
 
   # GET /todos/new
   def new
-    @todo = Todo.new
+    @todo = current_user.todos.build
   end
 
   # GET /todos/1/edit
@@ -21,7 +22,7 @@ class TodosController < ApplicationController
 
   # POST /todos or /todos.json
   def create
-    @todo = Todo.new(todo_params)
+    @todo = current_user.todos.build(todo_params)
 
     respond_to do |format|
       if @todo.save
@@ -60,7 +61,7 @@ class TodosController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_todo
-      @todo = Todo.find(params.expect(:id))
+      @todo = current_user.todos.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
