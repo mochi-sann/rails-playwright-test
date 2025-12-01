@@ -18,7 +18,7 @@ class CommentsController < ApplicationController
           render turbo_stream: turbo_stream.replace("comments_frame",
                                                     partial: "comments/comments",
                                                     locals: { todo: @todo },
-                                                    formats: [:html])
+                                                    formats: [ :html ])
         end
       else
         format.html { redirect_to @todo, alert: @comment.errors.full_messages.to_sentence }
@@ -26,7 +26,7 @@ class CommentsController < ApplicationController
           render turbo_stream: turbo_stream.replace("comments_frame",
                                                     partial: "comments/comments",
                                                     locals: { todo: @todo },
-                                                    formats: [:html]),
+                                                    formats: [ :html ]),
                  status: :unprocessable_entity
         end
       end
