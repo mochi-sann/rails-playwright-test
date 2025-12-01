@@ -3,6 +3,8 @@ class Todo < ApplicationRecord
 
   has_many :comments, dependent: :destroy
   has_many :subtasks, dependent: :destroy
+  has_many :todo_collaborations, dependent: :destroy
+  has_many :collaborators, through: :todo_collaborations, source: :user
 
   accepts_nested_attributes_for :subtasks, allow_destroy: true, reject_if: ->(attrs) { attrs["title"].blank? }
 

@@ -45,4 +45,31 @@ RSpec.describe "Todos", type: :request do
       expect(response).to redirect_to(new_session_path)
     end
   end
+
+  describe "sharing" do
+    let(:other_user) { User.create!(email: "other@example.com", password: "password", password_confirmation: "password") }
+
+    it "shares todo with another user" do
+      todo = user.todos.create!(title: "Share target")
+
+      expect do
+        post share_todo_path(todo), params: { share: { email: other_user.email } }
+      end.to change(TodoCollaboration, :count).by(1)
+
+      expect(response).to redirect_to(todo_path(todo))
+      follow_redirect!
+      expect(response.body).to include(other_user.email)
+    end
+
+    it "allows shared user to see in index" do
+      todo = user.todos.create!(title: "Shared task")
+      TodoCollaboration.create!(todo: todo, user: other_user)
+
+      delete session_path
+      sign_in(other_user)
+
+      get todos_path
+      expect(response.body).to include("Shared task")
+    end
+  end
 end

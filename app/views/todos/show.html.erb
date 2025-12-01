@@ -7,6 +7,29 @@
 </div>
 
 <div class="card">
+  <h3>共有ユーザー</h3>
+  <% if @todo.collaborators.any? %>
+    <ul>
+      <% @todo.collaborators.each do |collaborator| %>
+        <li><%= collaborator.email %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">共有ユーザーはいません。</p>
+  <% end %>
+
+  <%= form_with url: share_todo_path(@todo), method: :post do |f| %>
+    <div class="field">
+      <%= f.label :email, "メールアドレスで共有" %>
+      <%= f.email_field :email, name: "share[email]", required: true %>
+    </div>
+    <div class="todo-actions">
+      <%= f.submit "共有追加", class: "btn" %>
+    </div>
+  <% end %>
+</div>
+
+<div class="card">
   <h3>サブタスク</h3>
   <% if @todo.subtasks.any? %>
     <ul>

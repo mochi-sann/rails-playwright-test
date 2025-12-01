@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_01_161000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_01_170000) do
   create_table "comments", force: :cascade do |t|
     t.integer "todo_id", null: false
     t.integer "user_id", null: false
@@ -28,6 +28,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_01_161000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["todo_id"], name: "index_subtasks_on_todo_id"
+  end
+
+  create_table "todo_collaborations", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "todo_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["todo_id"], name: "index_todo_collaborations_on_todo_id"
+    t.index ["user_id", "todo_id"], name: "index_todo_collaborations_on_user_id_and_todo_id", unique: true
+    t.index ["user_id"], name: "index_todo_collaborations_on_user_id"
   end
 
   create_table "todos", force: :cascade do |t|
@@ -54,5 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_01_161000) do
   add_foreign_key "comments", "todos"
   add_foreign_key "comments", "users"
   add_foreign_key "subtasks", "todos"
+  add_foreign_key "todo_collaborations", "todos"
+  add_foreign_key "todo_collaborations", "users"
   add_foreign_key "todos", "users"
 end

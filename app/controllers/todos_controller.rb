@@ -4,7 +4,7 @@ class TodosController < ApplicationController
 
   # GET /todos or /todos.json
   def index
-    @todos = current_user.todos.order(created_at: :desc)
+    @todos = current_user.accessible_todos.order(created_at: :desc)
 
     if params[:status].present?
       case params[:status]
@@ -76,10 +76,26 @@ class TodosController < ApplicationController
     end
   end
 
+  def share
+    @todo = current_user.todos.find(params.expect(:id))
+    target_user = User.find_by(email: params.dig(:share, :email))
+
+    if target_user.blank?
+      redirect_to @todo, alert: "ユーザーが見つかりません" and return
+    end
+
+    collaboration = @todo.todo_collaborations.find_or_initialize_by(user: target_user)
+    if collaboration.save
+      redirect_to @todo, notice: "共有しました: #{target_user.email}"
+    else
+      redirect_to @todo, alert: collaboration.errors.full_messages.to_sentence
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_todo
-      @todo = current_user.todos.find(params.expect(:id))
+      @todo = current_user.accessible_todos.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
