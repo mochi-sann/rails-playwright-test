@@ -85,11 +85,11 @@ RSpec.configure do |config|
 
     driver = if ENV["CAPYBARA_DRIVER"].present?
                ENV["CAPYBARA_DRIVER"].to_sym
-             elsif ENV["CAPYBARA_ALLOW_SERVER"] == "1"
+    elsif ENV["CAPYBARA_ALLOW_SERVER"] == "1"
                ENV["NO_HEADLESS"] == "1" ? :playwright_ui : :playwright
-             else
+    else
                :rack_test
-             end
+    end
 
     driven_by driver
   end

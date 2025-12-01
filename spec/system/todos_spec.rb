@@ -26,5 +26,4 @@ RSpec.describe "Todos", type: :system do
     expect(page).to have_text("Todo was successfully created")
     expect(page).to have_text("Write system spec")
   end
-
 end
