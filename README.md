@@ -21,10 +21,10 @@
    - `bin/dev` を起動し、`http://localhost:3000/` をブラウザで開く（UI確認用）。
 2. E2E（システム）テスト実行
    - 別ターミナルで以下を実行。
-     - ヘッドレス実行（デフォルト）: `bundle exec rspec spec/system`
-     - Chromeを表示して実行: `NO_HEADLESS=1 bundle exec rspec spec/system`
-     - Chrome実行時はChrome/ChromeDriverが必要です（GitHub Actions などのホストには同梱されていることが多いですが、ローカルで不足している場合はインストールしてください）。
-    - 環境によってCapybaraのTCPポートがブロックされる場合があります。そのときは `CAPYBARA_ALLOW_SERVER=1 NO_HEADLESS=1 bundle exec rspec spec/system` でSeleniumを許可するか、`CAPYBARA_DRIVER=rack_test bundle exec rspec spec/system` でブラウザなしにフォールバックしてください。
+      - Playwright（ヘッドレス）: `CAPYBARA_ALLOW_SERVER=1 bundle exec rspec spec/system`
+      - PlaywrightでUI表示: `CAPYBARA_ALLOW_SERVER=1 NO_HEADLESS=1 bundle exec rspec spec/system`
+      - Playwright実行前にブラウザバイナリが未インストールの場合は `bundle exec playwright install chromium` を実行してください。
+    - 環境によってCapybaraのTCPポートがブロックされる場合があります。そのときは `CAPYBARA_DRIVER=rack_test bundle exec rspec spec/system` でブラウザなしにフォールバックしてください（デフォルトもrack_testです）。
 
 ### ログイン前提の動作
 - Todo閲覧・作成・編集・削除はログイン必須です。最初にサインアップしてログインしてください。

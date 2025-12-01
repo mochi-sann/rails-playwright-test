@@ -9,6 +9,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+require 'capybara/playwright'
+# Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -73,15 +75,22 @@ RSpec.configure do |config|
   config.include AuthHelpers, type: :request
 
   config.before(:each, type: :system) do
+    Capybara.register_driver :playwright do |app|
+      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true)
+    end
+
+    Capybara.register_driver :playwright_ui do |app|
+      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: false)
+    end
+
     driver = if ENV["CAPYBARA_DRIVER"].present?
                ENV["CAPYBARA_DRIVER"].to_sym
-             elsif ENV["NO_HEADLESS"] == "1"
-               # Some environments block TCP ports for Capybara server; fallback unless explicitly allowed.
-               ENV["CAPYBARA_ALLOW_SERVER"] == "1" ? :selenium_chrome : :rack_test
+             elsif ENV["CAPYBARA_ALLOW_SERVER"] == "1"
+               ENV["NO_HEADLESS"] == "1" ? :playwright_ui : :playwright
              else
-               :selenium_chrome_headless
+               :rack_test
              end
 
-    driven_by driver, screen_size: [1400, 1400]
+    driven_by driver
   end
 end

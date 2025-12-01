@@ -49,6 +49,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Playwright driver for Capybara (E2E/System tests)
+  gem "capybara-playwright-driver"
 end
 
 group :development do
