@@ -2,12 +2,34 @@ class CommentsController < ApplicationController
   before_action :require_login
   before_action :set_todo
 
+  def index
+    respond_to do |format|
+      format.html { render layout: false }
+      format.turbo_stream { render layout: false }
+    end
+  end
+
   def create
     @comment = @todo.comments.build(comment_params.merge(user: current_user))
-    if @comment.save
-      redirect_to @todo, notice: "コメントを追加しました"
-    else
-      redirect_to @todo, alert: @comment.errors.full_messages.to_sentence
+    respond_to do |format|
+      if @comment.save
+        format.html { redirect_to @todo, notice: "コメントを追加しました" }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("comments_frame",
+                                                    partial: "comments/comments",
+                                                    locals: { todo: @todo },
+                                                    formats: [:html])
+        end
+      else
+        format.html { redirect_to @todo, alert: @comment.errors.full_messages.to_sentence }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("comments_frame",
+                                                    partial: "comments/comments",
+                                                    locals: { todo: @todo },
+                                                    formats: [:html]),
+                 status: :unprocessable_entity
+        end
+      end
     end
   end
 

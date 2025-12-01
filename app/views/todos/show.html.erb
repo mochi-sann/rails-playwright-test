@@ -42,14 +42,8 @@
   <% else %>
     <p class="note">コメントはまだありません。</p>
   <% end %>
-
-  <%= form_with model: [@todo, Comment.new], url: todo_comments_path(@todo), local: true do |f| %>
-    <div class="field">
-      <%= f.label :body, "コメントを書く" %>
-      <%= f.text_area :body, rows: 3, required: true %>
-    </div>
-    <div class="todo-actions">
-      <%= f.submit "投稿", class: "btn" %>
-    </div>
-  <% end %>
 </div>
+
+<%= turbo_frame_tag "comments_frame", src: todo_comments_path(@todo) do %>
+  <div class="card"><p class="note">コメントを読み込み中...</p></div>
+<% end %>

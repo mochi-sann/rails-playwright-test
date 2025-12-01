@@ -33,6 +33,9 @@ RSpec.describe "End-to-end: Todo flow", type: :system do
     todo = Todo.order(created_at: :desc).first
     expect(todo.subtasks.pluck(:title)).to include("First step")
 
+    visit todo_path(todo)
+
+    visit todo_comments_path(todo)
     fill_in "コメントを書く", with: "Looks good"
     click_on "投稿"
 
