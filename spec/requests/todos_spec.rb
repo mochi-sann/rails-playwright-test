@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Todos", type: :request do
+  let(:user) { User.create!(email: "user@example.com", password: "password", password_confirmation: "password") }
+
+  before { sign_in(user) }
+
   describe "POST /todos" do
     it "creates a todo when valid" do
       expect do
@@ -16,6 +20,16 @@ RSpec.describe "Todos", type: :request do
       end.not_to change(Todo, :count)
 
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  describe "authorization" do
+    it "rejects access when not logged in" do
+      delete session_path # logout
+
+      get todos_path
+
+      expect(response).to redirect_to(new_session_path)
     end
   end
 end

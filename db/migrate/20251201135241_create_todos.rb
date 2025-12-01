@@ -4,7 +4,6 @@ class CreateTodos < ActiveRecord::Migration[8.0]
       t.string :title
       t.text :description
       t.boolean :completed
-      t.references :user, null: false, foreign_key: true
 
       t.timestamps
     end

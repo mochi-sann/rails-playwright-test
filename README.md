@@ -25,3 +25,7 @@
      - Chromeを表示して実行: `NO_HEADLESS=1 bundle exec rspec spec/system`
    - Chrome実行時はChrome/ChromeDriverが必要です（GitHub Actions などのホストには同梱されていることが多いですが、ローカルで不足している場合はインストールしてください）。
    - もし環境制約でCapybaraがTCPポートを開けない場合は、`CAPYBARA_DRIVER=rack_test bundle exec rspec spec/system` でRack::Testドライバにフォールバックできます（ブラウザなし）。
+
+### ログイン前提の動作
+- Todo閲覧・作成・編集・削除はログイン必須です。最初にサインアップしてログインしてください。
+- 画面上のフラッシュで作成/更新/完了（更新）時のステータスが表示されます。

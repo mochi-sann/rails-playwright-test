@@ -1,13 +1,22 @@
 require "rails_helper"
 
 RSpec.describe "Todos", type: :system do
+  let!(:user) { User.create!(email: "user@example.com", password: "password", password_confirmation: "password") }
+
+  before do
+    visit new_session_path
+    fill_in "Email", with: user.email
+    fill_in "Password", with: "password"
+    within("form") { click_button "ログイン" }
+  end
+
   it "creates a todo successfully" do
     visit root_path
 
-    click_on "New todo"
+    click_on "新規作成"
     fill_in "Title", with: "Write system spec"
     fill_in "Description", with: "Use rack_test driver"
-    click_on "Create Todo"
+    click_on "保存"
 
     expect(page).to have_text("Todo was successfully created")
     expect(page).to have_text("Write system spec")
@@ -17,7 +26,7 @@ RSpec.describe "Todos", type: :system do
     visit new_todo_path
 
     fill_in "Description", with: "Some description"
-    click_on "Create Todo"
+    click_on "保存"
 
     expect(page).to have_text("Title can't be blank")
   end
