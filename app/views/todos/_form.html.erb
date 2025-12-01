@@ -38,7 +38,8 @@
   <div class="field">
     <%= form.label :subtasks, "サブタスク" %>
     <div id="subtasks">
-      <%= form.fields_for :subtasks do |subtask_fields| %>
+      <% subtask_objects = todo.subtasks.any? ? todo.subtasks : [Subtask.new] %>
+      <%= form.fields_for :subtasks, subtask_objects do |subtask_fields| %>
         <div class="subtask-row">
           <%= subtask_fields.text_field :title, placeholder: "サブタスクタイトル" %>
           <%= subtask_fields.check_box :completed %> 完了
