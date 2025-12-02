@@ -75,12 +75,17 @@ RSpec.configure do |config|
   config.include AuthHelpers, type: :request
 
   config.before(:each, type: :system) do
+    video_dir = ENV["PLAYWRIGHT_RECORD"] == "1" ? Rails.root.join("tmp", "playwright_videos") : nil
+    FileUtils.mkdir_p(video_dir) if video_dir
+
     Capybara.register_driver :playwright do |app|
-      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true)
+      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true,
+                                       context_options: (video_dir ? { record_video_dir: video_dir.to_s } : {}))
     end
 
     Capybara.register_driver :playwright_ui do |app|
-      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: false)
+      Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: false,
+                                       context_options: (video_dir ? { record_video_dir: video_dir.to_s } : {}))
     end
 
     driver = if ENV["CAPYBARA_DRIVER"].present?

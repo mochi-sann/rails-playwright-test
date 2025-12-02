@@ -22,7 +22,8 @@
 2. E2E（システム）テスト実行
    - 別ターミナルで以下を実行。
       - Playwright（ヘッドレス）: `CAPYBARA_ALLOW_SERVER=1 bundle exec rspec spec/system`
-      - PlaywrightでUI表示: `capybara_allow_server=1 no_headless=1 bundle exec rspec spec/system`
+      - PlaywrightでUI表示: `CAPYBARA_ALLOW_SERVER=1 NO_HEADLESS=1 bundle exec rspec spec/system`
+      - 動画録画: `PLAYWRIGHT_RECORD=1 CAPYBARA_ALLOW_SERVER=1 NO_HEADLESS=1 bundle exec rspec spec/system`（保存先: `tmp/playwright_videos`）
       - Playwright実行前にブラウザバイナリが未インストールの場合は `bundle exec playwright install chromium` を実行してください。
     - 環境によってCapybaraのTCPポートがブロックされる場合があります。そのときは `CAPYBARA_DRIVER=rack_test bundle exec rspec spec/system` でブラウザなしにフォールバックしてください（デフォルトもrack_testです）。
 

@@ -74,6 +74,13 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
+    allure-rspec (2.27.0)
+      allure-ruby-commons (= 2.27.0)
+      rspec-core (>= 3.8, < 4)
+    allure-ruby-commons (2.27.0)
+      mime-types (>= 3.3, < 4)
+      require_all (>= 2, < 4)
+      rspec-expectations (~> 3.12)
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt (3.1.20)
@@ -264,6 +271,7 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
+    require_all (3.0.0)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.5)
@@ -383,6 +391,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  allure-rspec
   bcrypt (~> 3.1)
   bootsnap
   brakeman
