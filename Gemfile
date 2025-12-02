@@ -51,7 +51,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Playwright driver for Capybara (E2E/System tests)
-  gem "capybara-playwright-driver"
 end
 
 group :development do
@@ -62,7 +61,7 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "selenium-webdriver"
+  gem "capybara-playwright-driver"
 end
 
 gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
