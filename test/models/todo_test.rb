@@ -6,7 +6,11 @@ class TodoTest < ActiveSupport::TestCase
   end
 
   test "title is required" do
-    todo = Todo.new(description: "missing title", completed: false)
+    todo = Todo.new(description: "missing title",
+                    completed: false,
+                    due_date: Date.today,
+                    priority: :low,
+                    user: users(:one))
 
     assert_not todo.valid?
     assert_includes todo.errors[:title], "can't be blank"

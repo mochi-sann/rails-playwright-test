@@ -1,10 +1,11 @@
 class TodosController < ApplicationController
   before_action :require_login
-  before_action :set_todo, only: %i[ show edit update destroy ]
+  before_action :set_todo, only: %i[ show edit update destroy share ]
+  before_action :ensure_edit_permission, only: %i[ edit update destroy ]
 
   # GET /todos or /todos.json
   def index
-    @todos = current_user.accessible_todos.order(created_at: :desc)
+    @todos = current_user.accessible_todos.includes(:tags).order(created_at: :desc)
 
     if params[:status].present?
       case params[:status]
@@ -16,13 +17,16 @@ class TodosController < ApplicationController
     end
 
     if params[:tag].present?
-      @todos = @todos.where("tags LIKE ?", "%#{params[:tag]}%")
+      tag_name = params[:tag].strip.downcase
+      @todos = @todos.joins(:tags).where(tags: { name: tag_name })
     end
 
     if params[:q].present?
       q = "%#{params[:q]}%"
       @todos = @todos.where("title LIKE :q OR description LIKE :q", q: q)
     end
+
+    @todos = @todos.distinct
   end
 
   # GET /todos/1 or /todos/1.json
@@ -77,14 +81,20 @@ class TodosController < ApplicationController
   end
 
   def share
-    @todo = current_user.todos.find(params.expect(:id))
-    target_user = User.find_by(email: params.dig(:share, :email))
+    unless @todo.can_share?(current_user)
+      redirect_to @todo, alert: "共有権限がありません" and return
+    end
+
+    attrs = share_params
+    target_user = User.find_by(email: attrs[:email])
 
     if target_user.blank?
       redirect_to @todo, alert: "ユーザーが見つかりません" and return
     end
 
     collaboration = @todo.todo_collaborations.find_or_initialize_by(user: target_user)
+    requested_role = attrs[:role].presence&.to_s
+    collaboration.role = TodoCollaboration.roles.key?(requested_role) ? requested_role : :viewer
     if collaboration.save
       redirect_to @todo, notice: "共有しました: #{target_user.email}"
     else
@@ -100,7 +110,17 @@ class TodosController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def todo_params
-      params.require(:todo).permit(:title, :description, :completed, :due_date, :priority, :tags,
+      params.require(:todo).permit(:title, :description, :completed, :due_date, :priority, :tag_list,
                                    subtasks_attributes: %i[id title completed _destroy])
+    end
+
+    def share_params
+      params.require(:share).permit(:email, :role)
+    end
+
+    def ensure_edit_permission
+      return if @todo.can_edit?(current_user)
+
+      redirect_to @todo, alert: "編集権限がありません"
     end
 end

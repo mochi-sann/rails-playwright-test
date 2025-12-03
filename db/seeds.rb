@@ -20,7 +20,7 @@ User.transaction do
     t.completed = false
     t.due_date = Date.today + 2.days
     t.priority = :high
-    t.tags = "work,report"
+    t.tag_list = "work,report"
   end
 
   todo2 = user.todos.find_or_create_by!(title: "買い出し") do |t|
@@ -28,7 +28,7 @@ User.transaction do
     t.completed = false
     t.due_date = Date.today + 1.day
     t.priority = :medium
-    t.tags = "home,errand"
+    t.tag_list = "home,errand"
   end
 
   todo3 = user.todos.find_or_create_by!(title: "読書") do |t|
@@ -36,7 +36,7 @@ User.transaction do
     t.completed = true
     t.due_date = Date.today - 1.day
     t.priority = :low
-    t.tags = "personal"
+    t.tag_list = "personal"
   end
 
   todo1.subtasks.find_or_create_by!(title: "資料集め")

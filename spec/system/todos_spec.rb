@@ -21,6 +21,8 @@ RSpec.describe "Todos", type: :system do
     click_on "新規作成"
     fill_in "Title", with: "Write system spec"
     fill_in "Description", with: "Use rack_test driver"
+    fill_in "締切日", with: (Date.today + 1).to_s
+    select "Medium", from: "優先度"
     click_on "保存"
 
     expect(page).to have_text("Todo was successfully created")

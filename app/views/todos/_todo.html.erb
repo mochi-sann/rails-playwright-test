@@ -10,8 +10,8 @@
     <% if todo.priority.present? %>
       ・ 優先度: <%= todo.priority.titleize %>
     <% end %>
-    <% if todo.tags.present? %>
-      ・ タグ: <%= todo.tags %>
+    <% if todo.tags.any? %>
+      ・ タグ: <%= todo.tag_names.join(", ") %>
     <% end %>
   </div>
 

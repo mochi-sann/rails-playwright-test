@@ -8,24 +8,35 @@
 
 <div class="card">
   <h3>共有ユーザー</h3>
-  <% if @todo.collaborators.any? %>
+  <% if @todo.todo_collaborations.any? %>
     <ul>
-      <% @todo.collaborators.each do |collaborator| %>
-        <li><%= collaborator.email %></li>
+      <% @todo.todo_collaborations.includes(:user).each do |collaboration| %>
+        <li><%= collaboration.user.email %>（<%= collaboration.role == "manager" ? "共有" : collaboration.role == "editor" ? "編集" : "閲覧" %>）</li>
       <% end %>
     </ul>
   <% else %>
     <p class="note">共有ユーザーはいません。</p>
   <% end %>
 
-  <%= form_with url: share_todo_path(@todo), method: :post do |f| %>
-    <div class="field">
-      <%= f.label :email, "メールアドレスで共有" %>
-      <%= f.email_field :email, name: "share[email]", required: true %>
-    </div>
-    <div class="todo-actions">
-      <%= f.submit "共有追加", class: "btn" %>
-    </div>
+  <% if @todo.can_share?(current_user) %>
+    <%= form_with url: share_todo_path(@todo), method: :post, scope: :share do |f| %>
+      <div class="field">
+        <%= f.label :email, "メールアドレスで共有" %>
+        <%= f.email_field :email, required: true %>
+      </div>
+      <div class="field">
+        <%= f.label :role, "権限" %>
+        <%= f.select :role,
+                     [["閲覧のみ", :viewer], ["編集可", :editor], ["共有管理", :manager]],
+                     { selected: :viewer },
+                     required: true %>
+      </div>
+      <div class="todo-actions">
+        <%= f.submit "共有追加", class: "btn" %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="note">共有を変更する権限がありません。</p>
   <% end %>
 </div>
 

@@ -4,10 +4,14 @@ one:
   title: MyString
   description: MyText
   completed: false
+  due_date: <%= Date.today %>
+  priority: 0
   user: one
 
 two:
   title: MyString
   description: MyText
   completed: false
+  due_date: <%= Date.today %>
+  priority: 0
   user: two

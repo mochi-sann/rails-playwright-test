@@ -22,17 +22,17 @@
 
   <div class="field">
     <%= form.label :due_date, "締切日" %>
-    <%= form.date_field :due_date %>
+    <%= form.date_field :due_date, required: true %>
   </div>
 
   <div class="field">
     <%= form.label :priority, "優先度" %>
-    <%= form.select :priority, Todo.priorities.keys.map { |p| [p.titleize, p] }, include_blank: "未設定" %>
+    <%= form.select :priority, Todo.priorities.keys.map { |p| [p.titleize, p] }, {}, required: true %>
   </div>
 
   <div class="field">
-    <%= form.label :tags, "タグ (カンマ区切り)" %>
-    <%= form.text_field :tags, placeholder: "例: work,home" %>
+    <%= form.label :tag_list, "タグ (カンマ区切り)" %>
+    <%= form.text_field :tag_list, value: todo.tag_list, placeholder: "例: work,home" %>
   </div>
 
   <div class="field">

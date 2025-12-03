@@ -28,7 +28,7 @@ RSpec.describe "End-to-end: Todo flow", type: :system do
     expect(page).to have_text("Todo was successfully created")
     expect(page).to have_text("E2E Todo")
     expect(page).to have_text("High")
-    expect(page).to have_text("e2e,playwright")
+    expect(page).to have_text("e2e, playwright")
 
     todo = Todo.order(created_at: :desc).first
     expect(todo.subtasks.pluck(:title)).to include("First step")

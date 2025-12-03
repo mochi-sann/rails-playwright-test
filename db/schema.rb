@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_01_170000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_03_020419) do
   create_table "comments", force: :cascade do |t|
     t.integer "todo_id", null: false
     t.integer "user_id", null: false
@@ -30,26 +30,43 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_01_170000) do
     t.index ["todo_id"], name: "index_subtasks_on_todo_id"
   end
 
+  create_table "tags", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name", unique: true
+  end
+
   create_table "todo_collaborations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "todo_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0, null: false
     t.index ["todo_id"], name: "index_todo_collaborations_on_todo_id"
     t.index ["user_id", "todo_id"], name: "index_todo_collaborations_on_user_id_and_todo_id", unique: true
     t.index ["user_id"], name: "index_todo_collaborations_on_user_id"
   end
 
+  create_table "todo_tags", force: :cascade do |t|
+    t.integer "todo_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_todo_tags_on_tag_id"
+    t.index ["todo_id", "tag_id"], name: "index_todo_tags_on_todo_id_and_tag_id", unique: true
+    t.index ["todo_id"], name: "index_todo_tags_on_todo_id"
+  end
+
   create_table "todos", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.text "description"
-    t.boolean "completed"
+    t.boolean "completed", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.date "due_date"
+    t.date "due_date", default: -> { "CURRENT_DATE" }, null: false
     t.integer "priority", default: 0, null: false
-    t.string "tags"
     t.index ["user_id"], name: "index_todos_on_user_id"
   end
 
@@ -66,5 +83,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_01_170000) do
   add_foreign_key "subtasks", "todos"
   add_foreign_key "todo_collaborations", "todos"
   add_foreign_key "todo_collaborations", "users"
+  add_foreign_key "todo_tags", "tags"
+  add_foreign_key "todo_tags", "todos"
   add_foreign_key "todos", "users"
 end

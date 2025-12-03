@@ -10,5 +10,6 @@ class User < ApplicationRecord
   def accessible_todos
     Todo.left_outer_joins(:todo_collaborations)
         .where("todos.user_id = :id OR todo_collaborations.user_id = :id", id: id)
+        .distinct
   end
 end

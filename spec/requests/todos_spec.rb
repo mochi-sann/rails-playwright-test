@@ -6,9 +6,20 @@ RSpec.describe "Todos", type: :request do
   before { sign_in(user) }
 
   describe "POST /todos" do
+    let(:valid_payload) do
+      {
+        title: "New Todo",
+        description: "RSpec request spec",
+        completed: false,
+        due_date: Date.current + 1.day,
+        priority: :high,
+        tag_list: "work"
+      }
+    end
+
     it "creates a todo when valid" do
       expect do
-        post todos_path, params: { todo: { title: "New Todo", description: "RSpec request spec", completed: false, priority: :high, tags: "work" } }
+        post todos_path, params: { todo: valid_payload }
       end.to change(Todo, :count).by(1)
 
       expect(response).to redirect_to(todo_path(Todo.last))
@@ -16,7 +27,7 @@ RSpec.describe "Todos", type: :request do
 
     it "returns 422 when title is blank" do
       expect do
-        post todos_path, params: { todo: { title: "", description: "No title", completed: false } }
+        post todos_path, params: { todo: valid_payload.merge(title: "") }
       end.not_to change(Todo, :count)
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -25,8 +36,8 @@ RSpec.describe "Todos", type: :request do
 
   describe "filtering" do
     before do
-      user.todos.create!(title: "Open", completed: false)
-      user.todos.create!(title: "Done", completed: true)
+      user.todos.create!(title: "Open", completed: false, due_date: Date.current + 1.day, priority: :low)
+      user.todos.create!(title: "Done", completed: true, due_date: Date.current + 1.day, priority: :low)
     end
 
     it "filters by status open" do
@@ -50,10 +61,10 @@ RSpec.describe "Todos", type: :request do
     let(:other_user) { User.create!(email: "other@example.com", password: "password", password_confirmation: "password") }
 
     it "shares todo with another user" do
-      todo = user.todos.create!(title: "Share target")
+      todo = user.todos.create!(title: "Share target", due_date: Date.current + 2.days, priority: :medium)
 
       expect do
-        post share_todo_path(todo), params: { share: { email: other_user.email } }
+        post share_todo_path(todo), params: { share: { email: other_user.email, role: :viewer } }
       end.to change(TodoCollaboration, :count).by(1)
 
       expect(response).to redirect_to(todo_path(todo))
@@ -62,8 +73,8 @@ RSpec.describe "Todos", type: :request do
     end
 
     it "allows shared user to see in index" do
-      todo = user.todos.create!(title: "Shared task")
-      TodoCollaboration.create!(todo: todo, user: other_user)
+      todo = user.todos.create!(title: "Shared task", due_date: Date.current + 3.days, priority: :medium)
+      TodoCollaboration.create!(todo: todo, user: other_user, role: :viewer)
 
       delete session_path
       sign_in(other_user)
