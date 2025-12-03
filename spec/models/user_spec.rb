@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   it "requires email uniqueness" do
-    User.create!(email: "dupe@example.com", password: "password", password_confirmation: "password")
+    create(:user, email: "dupe@example.com")
 
-    user = User.new(email: "dupe@example.com", password: "password", password_confirmation: "password")
+    user = build(:user, email: "dupe@example.com")
 
     expect(user).not_to be_valid
     expect(user.errors[:email]).to include("has already been taken")

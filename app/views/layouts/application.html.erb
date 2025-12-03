@@ -47,5 +47,21 @@
 
       <%= yield %>
     </main>
+    <% if Rails.env.test? %>
+      <script>
+        window.__playwrightConsole = window.__playwrightConsole || [];
+        ["log", "warn", "error"].forEach(function(level) {
+          const original = console[level];
+          console[level] = function() {
+            const message = Array.from(arguments).map(function(arg) {
+              try { return typeof arg === "object" ? JSON.stringify(arg) : String(arg); }
+              catch(e) { return String(arg); }
+            }).join(" ");
+            window.__playwrightConsole.push("[" + level + "] " + message);
+            if (original) { original.apply(console, arguments); }
+          };
+        });
+      </script>
+    <% end %>
   </body>
 </html>

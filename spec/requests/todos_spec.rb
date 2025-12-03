@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Todos", type: :request do
-  let(:user) { User.create!(email: "user@example.com", password: "password", password_confirmation: "password") }
+  let(:user) { create(:user) }
 
   before { sign_in(user) }
 
@@ -36,8 +36,8 @@ RSpec.describe "Todos", type: :request do
 
   describe "filtering" do
     before do
-      user.todos.create!(title: "Open", completed: false, due_date: Date.current + 1.day, priority: :low)
-      user.todos.create!(title: "Done", completed: true, due_date: Date.current + 1.day, priority: :low)
+      create(:todo, user: user, title: "Open", completed: false, due_date: Date.current + 1.day, priority: :low)
+      create(:todo, user: user, title: "Done", completed: true, due_date: Date.current + 1.day, priority: :low)
     end
 
     it "filters by status open" do
@@ -58,10 +58,10 @@ RSpec.describe "Todos", type: :request do
   end
 
   describe "sharing" do
-    let(:other_user) { User.create!(email: "other@example.com", password: "password", password_confirmation: "password") }
+    let(:other_user) { create(:user) }
 
     it "shares todo with another user" do
-      todo = user.todos.create!(title: "Share target", due_date: Date.current + 2.days, priority: :medium)
+      todo = create(:todo, user: user, title: "Share target", due_date: Date.current + 2.days, priority: :medium)
 
       expect do
         post share_todo_path(todo), params: { share: { email: other_user.email, role: :viewer } }
@@ -73,8 +73,8 @@ RSpec.describe "Todos", type: :request do
     end
 
     it "allows shared user to see in index" do
-      todo = user.todos.create!(title: "Shared task", due_date: Date.current + 3.days, priority: :medium)
-      TodoCollaboration.create!(todo: todo, user: other_user, role: :viewer)
+      todo = create(:todo, user: user, title: "Shared task", due_date: Date.current + 3.days, priority: :medium)
+      create(:todo_collaboration, todo: todo, user: other_user, role: :viewer)
 
       delete session_path
       sign_in(other_user)

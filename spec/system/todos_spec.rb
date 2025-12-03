@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Todos", type: :system do
-  let!(:user) { User.create!(email: "user@example.com", password: "password", password_confirmation: "password") }
+  let!(:user) { create(:user, email: "user@example.com", password: "password", password_confirmation: "password") }
 
   before do
     visit new_session_path

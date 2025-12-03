@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "User signup and login", type: :system do
-  let!(:user) { User.create!(email: "login@example.com", password: "password123", password_confirmation: "password123") }
+  let!(:user) { create(:user, email: "login@example.com", password: "password123", password_confirmation: "password123") }
 
   it "signs up a user named example_user and shows logged-in state" do
     visit new_user_path

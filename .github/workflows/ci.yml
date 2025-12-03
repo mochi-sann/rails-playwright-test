@@ -19,6 +19,12 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Cache Brakeman reports
+        uses: actions/cache@v4
+        with:
+          path: tmp/brakeman
+          key: ${{ runner.os }}-brakeman-${{ hashFiles('Gemfile.lock') }}
+
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
@@ -50,21 +56,40 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Cache Rubocop offenses
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/rubocop_cache
+          key: ${{ runner.os }}-rubocop-${{ hashFiles('Gemfile.lock', '.rubocop.yml') }}
+
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database: [sqlite, postgres]
+        driver_mode: [headless, headed]
 
-    # services:
-    #  redis:
-    #    image: redis
-    #    ports:
-    #      - 6379:6379
-    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: rails_playwright_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Install packages (Playwright deps included)
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libasound2t64 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgtk-3-0
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libasound2t64 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgtk-3-0 libpq-dev postgresql-client
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -75,6 +100,10 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Configure PostgreSQL database url
+        if: matrix.database == 'postgres'
+        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/rails_playwright_test" >> $GITHUB_ENV
+
       - name: Install Playwright (npm) and browsers
         run: |
           npm install playwright@1.57.0 --no-save
@@ -84,9 +113,9 @@ jobs:
         env:
           RAILS_ENV: test
           CAPYBARA_ALLOW_SERVER: "1"
-          # REDIS_URL: redis://localhost:6379/0
+          NO_HEADLESS: ${{ matrix.driver_mode == 'headed' && '1' || '0' }}
         run: |
-          bin/rails db:test:prepare
+          bin/rails db:prepare
           bundle exec rspec
 
       - name: Keep screenshots from failed system tests

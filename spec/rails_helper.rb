@@ -74,7 +74,7 @@ RSpec.configure do |config|
 
   config.include AuthHelpers, type: :request
 
-  config.before(:each, type: :system) do
+  config.before(:each, type: :system) do |example|
     video_dir = ENV["PLAYWRIGHT_RECORD"] == "1" ? Rails.root.join("tmp", "playwright_videos") : nil
     FileUtils.mkdir_p(video_dir) if video_dir
 
@@ -88,7 +88,9 @@ RSpec.configure do |config|
                                        context_options: (video_dir ? { record_video_dir: video_dir.to_s } : {}))
     end
 
-    driver = if ENV["CAPYBARA_DRIVER"].present?
+    driver = if example.metadata[:capybara_driver].present?
+               example.metadata[:capybara_driver]
+    elsif ENV["CAPYBARA_DRIVER"].present?
                ENV["CAPYBARA_DRIVER"].to_sym
     elsif ENV["CAPYBARA_ALLOW_SERVER"] == "1"
                ENV["NO_HEADLESS"] == "1" ? :playwright_ui : :playwright
