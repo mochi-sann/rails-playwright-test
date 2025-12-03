@@ -6,6 +6,8 @@ gem "rails", "~> 8.0.4"
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
+# Optional PostgreSQL support for CI matrix
+gem "pg", group: [ :development, :test ]
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -18,7 +20,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -49,6 +51,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Playwright driver for Capybara (E2E/System tests)
+  gem "factory_bot_rails"
 end
 
 group :development do
@@ -59,5 +64,8 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "selenium-webdriver"
+  gem "capybara-playwright-driver"
+  gem "allure-rspec"
 end
+
+gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]

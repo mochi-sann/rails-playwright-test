@@ -8,3 +8,154 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+:root {
+  --bg: #f7f7fb;
+  --panel: #ffffff;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.site-header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-link {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-text {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover { background: var(--primary-dark); }
+.btn:active { transform: translateY(1px); }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--primary);
+}
+
+.btn.secondary {
+  background: #e5e7eb;
+  color: var(--text);
+  border-color: #e5e7eb;
+}
+
+.flash {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  background: #eef2ff;
+}
+
+.flash.notice { border-color: #c7d2fe; color: #1d4ed8; }
+.flash.alert { border-color: #fecdd3; background: #fff1f2; color: #b91c1c; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px -18px rgba(0,0,0,0.25);
+}
+
+.card h1, .card h2, .card h3 { margin-top: 0; }
+
+.todo-meta { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+.todo-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+
+.subtask-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.note { color: var(--muted); font-size: 14px; }
+
+form .field { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+form label { font-weight: 600; color: var(--text); }
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+form textarea { min-height: 120px; }
+
+.link-muted { color: var(--muted); text-decoration: none; font-size: 14px; }
+.link-muted:hover { text-decoration: underline; }
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.todo-completed { color: #047857; font-weight: 600; }
+.todo-open { color: #b91c1c; font-weight: 600; }

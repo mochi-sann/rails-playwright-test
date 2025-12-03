@@ -1,0 +1,66 @@
+<%= form_with(model: todo) do |form| %>
+  <% if todo.errors.any? %>
+    <div class="flash alert">
+      <h3>保存できませんでした</h3>
+      <ul>
+        <% todo.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, required: true, placeholder: "タイトル" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.textarea :description, placeholder: "詳細やメモを書いてください" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :due_date, "締切日" %>
+    <%= form.date_field :due_date, required: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :priority, "優先度" %>
+    <%= form.select :priority, Todo.priorities.keys.map { |p| [p.titleize, p] }, {}, required: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :tag_list, "タグ (カンマ区切り)" %>
+    <%= form.text_field :tag_list, value: todo.tag_list, placeholder: "例: work,home" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :subtasks, "サブタスク" %>
+    <div id="subtasks">
+      <% subtask_objects = todo.subtasks.any? ? todo.subtasks : [Subtask.new] %>
+      <%= form.fields_for :subtasks, subtask_objects do |subtask_fields| %>
+        <div class="subtask-row">
+          <%= subtask_fields.text_field :title, placeholder: "サブタスクタイトル" %>
+          <%= subtask_fields.check_box :completed %> 完了
+          <% if subtask_fields.object.persisted? %>
+            <%= subtask_fields.check_box :_destroy %> 削除
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <p class="note">既存サブタスクのみ編集/削除可。追加が必要な場合は編集後に再度保存してください。</p>
+  </div>
+
+  <div class="field">
+    <%= form.label :completed do %>
+      <%= form.check_box :completed %>
+      完了にする
+    <% end %>
+  </div>
+
+  <div class="todo-actions">
+    <%= form.submit "保存", class: "btn" %>
+    <%= link_to "戻る", todos_path, class: "btn secondary" %>
+  </div>
+<% end %>

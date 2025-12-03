@@ -1,0 +1,83 @@
+<%= render @todo %>
+
+<div class="todo-actions">
+  <%= link_to "編集", edit_todo_path(@todo), class: "btn" %>
+  <%= link_to "一覧へ戻る", todos_path, class: "btn secondary" %>
+  <%= button_to "削除", @todo, method: :delete, class: "btn ghost", form: { data: { turbo_confirm: "削除しますか？" } } %>
+</div>
+
+<div class="card">
+  <h3>共有ユーザー</h3>
+  <% if @todo.todo_collaborations.any? %>
+    <ul>
+      <% @todo.todo_collaborations.includes(:user).each do |collaboration| %>
+        <li><%= collaboration.user.email %>（<%= collaboration.role == "manager" ? "共有" : collaboration.role == "editor" ? "編集" : "閲覧" %>）</li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">共有ユーザーはいません。</p>
+  <% end %>
+
+  <% if @todo.can_share?(current_user) %>
+    <%= form_with url: share_todo_path(@todo), method: :post, scope: :share do |f| %>
+      <div class="field">
+        <%= f.label :email, "メールアドレスで共有" %>
+        <%= f.email_field :email, required: true %>
+      </div>
+      <div class="field">
+        <%= f.label :role, "権限" %>
+        <%= f.select :role,
+                     [["閲覧のみ", :viewer], ["編集可", :editor], ["共有管理", :manager]],
+                     { selected: :viewer },
+                     required: true %>
+      </div>
+      <div class="todo-actions">
+        <%= f.submit "共有追加", class: "btn" %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="note">共有を変更する権限がありません。</p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>サブタスク</h3>
+  <% if @todo.subtasks.any? %>
+    <ul>
+      <% @todo.subtasks.each do |subtask| %>
+        <li>
+          <% if subtask.completed %>
+            ✅
+          <% else %>
+            ☐
+          <% end %>
+          <%= subtask.title %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">サブタスクはまだありません。</p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>コメント</h3>
+  <% if @todo.comments.any? %>
+    <ul>
+      <% @todo.comments.order(created_at: :desc).each do |comment| %>
+        <li>
+          <div class="todo-meta">
+            <%= comment.user.email %> ・ <%= l comment.created_at, format: :short %>
+          </div>
+          <div><%= simple_format(comment.body) %></div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="note">コメントはまだありません。</p>
+  <% end %>
+</div>
+
+<%= turbo_frame_tag "comments_frame", src: todo_comments_path(@todo) do %>
+  <div class="card"><p class="note">コメントを読み込み中...</p></div>
+<% end %>

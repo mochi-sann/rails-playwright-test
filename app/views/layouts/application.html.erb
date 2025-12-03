@@ -23,6 +23,45 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <%= link_to "Rails Todo", root_path, class: "brand-link" %>
+        </div>
+        <nav class="nav-links">
+          <% if logged_in? %>
+            <span class="nav-text">ログイン中: <%= current_user.email %></span>
+            <%= button_to "ログアウト", session_path, method: :delete, class: "btn ghost" %>
+          <% else %>
+            <%= link_to "ログイン", new_session_path, class: "btn ghost" %>
+            <%= link_to "サインアップ", new_user_path, class: "btn primary" %>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <% flash.each do |type, message| %>
+        <div class="flash <%= type %>"><%= message %></div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+    <% if Rails.env.test? %>
+      <script>
+        window.__playwrightConsole = window.__playwrightConsole || [];
+        ["log", "warn", "error"].forEach(function(level) {
+          const original = console[level];
+          console[level] = function() {
+            const message = Array.from(arguments).map(function(arg) {
+              try { return typeof arg === "object" ? JSON.stringify(arg) : String(arg); }
+              catch(e) { return String(arg); }
+            }).join(" ");
+            window.__playwrightConsole.push("[" + level + "] " + message);
+            if (original) { original.apply(console, arguments); }
+          };
+        });
+      </script>
+    <% end %>
   </body>
 </html>

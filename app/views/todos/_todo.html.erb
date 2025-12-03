@@ -1,0 +1,26 @@
+<div id="<%= dom_id todo %>" class="card">
+  <div class="todo-meta">
+    <span class="<%= todo.completed ? 'todo-completed' : 'todo-open' %>">
+      <%= todo.completed ? '完了' : '未完了' %>
+    </span>
+    ・ <%= todo.created_at.strftime('%Y-%m-%d %H:%M') %>
+    <% if todo.due_date.present? %>
+      ・ 期限: <%= todo.due_date %>
+    <% end %>
+    <% if todo.priority.present? %>
+      ・ 優先度: <%= todo.priority.titleize %>
+    <% end %>
+    <% if todo.tags.any? %>
+      ・ タグ: <%= todo.tag_names.join(", ") %>
+    <% end %>
+  </div>
+
+  <h3><%= todo.title %></h3>
+  <p><%= simple_format(todo.description.presence || "(説明なし)") %></p>
+
+  <div class="todo-actions">
+    <%= link_to "詳細", todo, class: "btn secondary" %>
+    <%= link_to "編集", edit_todo_path(todo), class: "btn ghost" %>
+    <%= button_to "削除", todo, method: :delete, class: "btn ghost", form: { data: { turbo_confirm: "削除しますか？" } } %>
+  </div>
+</div>

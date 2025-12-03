@@ -4,12 +4,22 @@ require "rails/test_help"
 
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
-    parallelize(workers: :number_of_processors)
+    # Run tests serially to avoid sqlite locking
+    parallelize(workers: 1)
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
   end
+end
+
+module SignInHelper
+  def sign_in(user, password: "password")
+    post session_url, params: { session: { email: user.email, password: password } }
+  end
+end
+
+class ActionDispatch::IntegrationTest
+  include SignInHelper
 end
